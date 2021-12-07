@@ -14,7 +14,7 @@ impl Transparent {
 }
 
 fn build_client(caching: bool) -> surf::Client {
-    if caching == true {
+    if caching {
         surf::client().with(Cache {
             mode: CacheMode::Default,
             cache_manager: CACacheManager::default(),
@@ -30,11 +30,7 @@ fn deny_request(remote_addr: Option<&str>, settings: &Settings) -> bool {
             log::debug!("only_allow contains hosts, requests from other hosts will be denied");
             match parse_remote(remote) {
                 Ok(host) => {
-                    if settings.only_allow.contains(&host) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+                    return !settings.only_allow.contains(&host);
                 }
                 Err(e) => {
                     log::error!("{:?}", e);
