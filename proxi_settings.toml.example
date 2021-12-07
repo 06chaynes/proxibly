@@ -1,0 +1,7 @@
+listen_port = 4242
+listen_address = "127.0.0.1"
+only_allow = []
+only_deny = []
+
+[transparent]
+response_caching = false
