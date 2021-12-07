@@ -38,6 +38,18 @@ fn deny_request(remote_addr: Option<&str>, settings: &Settings) -> bool {
                     return true;
                 }
             }
+        } else if !settings.only_deny.is_empty() {
+            log::debug!("only_deny contains hosts, requests from these hosts will be denied");
+            match parse_remote(remote) {
+                Ok(host) => {
+                    return settings.only_deny.contains(&host);
+                }
+                Err(e) => {
+                    log::error!("{:?}", e);
+                    // Cannot determine remote_addr, denying by default
+                    return true;
+                }
+            }
         }
     } else {
         return true;
