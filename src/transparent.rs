@@ -64,7 +64,6 @@ fn denied_response() -> Response {
 #[tide::utils::async_trait]
 impl<T: Clone + Send + Sync + 'static> Middleware<T> for Transparent {
     async fn handle(&self, mut request: Request<T>, _next: Next<'_, T>) -> Result {
-        println!("remote: {}", request.remote().unwrap());
         if deny_request(request.remote(), &self.settings) {
             return Ok(denied_response());
         }
