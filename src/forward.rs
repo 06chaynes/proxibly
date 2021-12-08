@@ -3,11 +3,11 @@ use crate::settings::Settings;
 use surf_middleware_cache::{managers::CACacheManager, Cache, CacheMode};
 use tide::{http, log, Middleware, Next, Request, Response, Result, StatusCode};
 
-pub struct Transparent {
+pub struct Forward {
     settings: Settings,
 }
 
-impl Transparent {
+impl Forward {
     pub fn new(s: &Settings) -> Self {
         Self {
             settings: s.clone(),
@@ -72,7 +72,7 @@ fn denied_response() -> Response {
 }
 
 #[tide::utils::async_trait]
-impl<T: Clone + Send + Sync + 'static> Middleware<T> for Transparent {
+impl<T: Clone + Send + Sync + 'static> Middleware<T> for Forward {
     async fn handle(&self, mut request: Request<T>, _next: Next<'_, T>) -> Result {
         if deny_request(request.remote(), &self.settings) {
             return Ok(denied_response());
@@ -81,7 +81,7 @@ impl<T: Clone + Send + Sync + 'static> Middleware<T> for Transparent {
         let http_request: &http::Request = request.as_ref();
         let mut http_request = http_request.clone();
         http_request.set_body(body);
-        let caching = self.settings.transparent.response_caching;
+        let caching = self.settings.forward.response_caching;
 
         let client = build_client(caching);
         let mut res = client.send(http_request).await?;

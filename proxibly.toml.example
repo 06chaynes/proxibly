@@ -2,7 +2,7 @@ log_level = "warn"
 listener = "http"
 listen_port = 8080
 listen_address = "127.0.0.1"
-mode = "transparent"
+mode = "forward"
 only_allow = []
 only_deny = []
 
@@ -10,5 +10,5 @@ only_deny = []
 cert_path = "./crt.pem"
 key_path = "./key.pem"
 
-[transparent]
+[forward]
 response_caching = false

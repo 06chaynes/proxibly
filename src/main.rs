@@ -1,5 +1,5 @@
+mod forward;
 mod settings;
-mod transparent;
 
 use settings::{Listener, Mode};
 
@@ -14,8 +14,8 @@ async fn main() -> Result<()> {
     let mut app = tide::new();
     app.with(driftwood::ApacheCombinedLogger);
     match &settings.mode()? {
-        Mode::Transparent => {
-            app.with(transparent::Transparent::new(&settings));
+        Mode::Forward => {
+            app.with(forward::Forward::new(&settings));
         }
         Mode::Reverse => {
             unimplemented!()

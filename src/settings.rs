@@ -6,7 +6,7 @@ use tide::log::LevelFilter;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Mode {
-    Transparent,
+    Forward,
     Reverse,
 }
 
@@ -14,7 +14,7 @@ impl FromStr for Mode {
     type Err = anyhow::Error;
     fn from_str(mode: &str) -> anyhow::Result<Mode> {
         match mode {
-            "transparent" => Ok(Mode::Transparent),
+            "forward" => Ok(Mode::Forward),
             "reverse" => Ok(Mode::Reverse),
             _ => anyhow::bail!("Unable to determine mode from str"),
         }
@@ -50,7 +50,7 @@ pub struct Settings {
     pub mode: String,
     pub only_allow: Vec<String>,
     pub only_deny: Vec<String>,
-    pub transparent: Transparent,
+    pub forward: Forward,
 }
 
 impl Settings {
@@ -68,7 +68,7 @@ impl Settings {
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
-pub struct Transparent {
+pub struct Forward {
     pub response_caching: bool,
 }
 
@@ -88,10 +88,10 @@ impl Settings {
         s.set_default("https.key_path", "./key.pem")?;
         s.set_default("listen_port", 8080)?;
         s.set_default("listen_address", "127.0.0.1")?;
-        s.set_default("mode", "transparent")?;
+        s.set_default("mode", "forward")?;
         s.set_default("only_allow", empty.clone())?;
         s.set_default("only_deny", empty)?;
-        s.set_default("transparent.response_caching", false)?;
+        s.set_default("forward.response_caching", false)?;
         s.merge(File::with_name("proxibly.toml").required(false))?;
         s.merge(Environment::new())?;
         s.try_into()
