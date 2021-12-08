@@ -77,6 +77,10 @@ impl<T: Clone + Send + Sync + 'static> Middleware<T> for Forward {
         if deny_request(request.remote(), &self.settings) {
             return Ok(denied_response());
         }
+        if request.method() == http::Method::Connect {
+            // Unable to support proxy connect atm
+            return Ok(Response::new(StatusCode::MethodNotAllowed));
+        }
         let body = request.take_body();
         let http_request: &http::Request = request.as_ref();
         let mut http_request = http_request.clone();
