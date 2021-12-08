@@ -81,8 +81,8 @@ impl<T: Clone + Send + Sync + 'static> Middleware<T> for Forward {
         let http_request: &http::Request = request.as_ref();
         let mut http_request = http_request.clone();
         http_request.set_body(body);
-        let caching = self.settings.forward.response_caching;
 
+        let caching = self.settings.forward.response_caching;
         let client = build_client(caching);
         let mut res = client.send(http_request).await?;
         // hacky fix for the etag header being malformed
