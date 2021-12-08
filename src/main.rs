@@ -1,7 +1,10 @@
 mod settings;
 mod transparent;
 
+use settings::{Listener, Mode};
+
 use tide::{log, Result};
+use tide_rustls::TlsListener;
 
 #[async_std::main]
 async fn main() -> Result<()> {
@@ -10,7 +13,30 @@ async fn main() -> Result<()> {
     log::with_level(settings.filter_level()?);
     let mut app = tide::new();
     app.with(driftwood::ApacheCombinedLogger);
-    app.with(transparent::Transparent::new(settings));
-    app.listen(&addr).await?;
+    match &settings.mode()? {
+        Mode::Transparent => {
+            app.with(transparent::Transparent::new(&settings));
+        }
+        Mode::Reverse => {
+            unimplemented!()
+        }
+    }
+    match &settings.listener()? {
+        Listener::Http => {
+            app.listen(&addr).await?;
+        }
+        Listener::Https => {
+            app.listen(
+                TlsListener::build()
+                    .addrs(&addr)
+                    .cert(&settings.https.cert_path)
+                    .key(&settings.https.key_path),
+            )
+            .await?;
+        }
+        Listener::Acme => {
+            unimplemented!()
+        }
+    }
     Ok(())
 }

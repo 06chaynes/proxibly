@@ -12,3 +12,4 @@ serde = { version = "1.0.130", features = ["derive"] }
 surf = "2.3.2"
 surf-middleware-cache = "0.2.2"
 tide = "0.16.0"
+tide-rustls = "0.3.0"

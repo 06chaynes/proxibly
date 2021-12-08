@@ -8,8 +8,10 @@ pub struct Transparent {
 }
 
 impl Transparent {
-    pub fn new(settings: Settings) -> Self {
-        Self { settings }
+    pub fn new(s: &Settings) -> Self {
+        Self {
+            settings: s.clone(),
+        }
     }
 }
 
